@@ -1,0 +1,31 @@
+/* create variable for seat size */
+$seat-size: 70px;
+
+.seat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px !important;
+    height: 40px;
+    margin: 5px 0px;
+    cursor: pointer;
+    &:not(.booked) {
+        &:hover {
+            transform: translateY(-5px);
+            transition: all 0.2s ease-out;
+        }
+    }
+
+    &:not(.choosing) {
+        &:hover {
+            transform: none;
+            transition: none;
+        }
+        cursor: default;
+    }
+}
+
+img {
+    width: $seat-size;
+    height: $seat-size;
+}

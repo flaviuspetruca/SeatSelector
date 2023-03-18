@@ -1,0 +1,36 @@
+* {
+    font-family: 'Anton', sans-serif;
+}
+
+a {
+    text-decoration: none !important;
+    color: #535de6 !important;
+}
+
+.App {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    height: 100vh;
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.header {
+    margin: 40px 0 10px 0;
+    font-size: 70px;
+}
+.subheader {
+    margin: 20px 0 10px 0;
+    font-size: 20px;
+}
