@@ -2,15 +2,23 @@ import { useEffect, useState } from 'react';
 import { ISeat } from '../../types';
 import SEATS from '../../assets/seats.json';
 import screen from '../../assets/screen2.svg';
+import seatIcon from '../../assets/seat.svg';
 import Seat from '../Seat/Seat';
 
 import '../../stylesheets/Seats/Seats.css';
-import { Button } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
+import SideBar from '../SideBar/SideBar';
 
 const Seats = () => {
     const [seats, setSeats] = useState<ISeat[]>([]);
     const [selectedSeats, setSelectedSeats] = useState<ISeat[]>([]);
     const [choosing, setChoosing] = useState(false);
+
+    const [showModal, setShowModal] = useState(false);
+
+    const handleModalClose = () => {
+        setShowModal(false);
+    };
 
     const handleSeatSelection = () => {
         setChoosing(!choosing);
@@ -22,7 +30,17 @@ const Seats = () => {
             return;
         }
         selectedSeats.push(seat);
-        setSelectedSeats(selectedSeats);
+        localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats));
+        setSelectedSeats([...selectedSeats]);
+    };
+
+    const removeSelectedSeat = (seat: ISeat) => {
+        const index = selectedSeats.indexOf(seat);
+        if (index > -1) {
+            selectedSeats.splice(index, 1);
+        }
+        localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats));
+        setSelectedSeats([...selectedSeats]);
     };
 
     useEffect(() => {
@@ -33,6 +51,11 @@ const Seats = () => {
             setSeats(data) */
         };
         getSeats();
+        // get selected seats from localstorage
+        const selectedSeats = localStorage.getItem('selectedSeats');
+        if (selectedSeats) {
+            setSelectedSeats(JSON.parse(selectedSeats));
+        }
     }, []);
 
     const rows = [];
@@ -70,35 +93,52 @@ const Seats = () => {
     );
 
     return (
-        <div className="container-seats">
-            <div className="seat-selector">
-                <div className="header">
-                    <h1 className="header">Seats</h1>
-                    <Button
-                        variant={!choosing ? 'primary' : 'warning'}
-                        onClick={handleSeatSelection}
-                    >
-                        {!choosing ? 'Choose seats' : 'Cancel'}
+        <>
+            <Modal show={showModal} onHide={handleModalClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Fill in the information</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group>
+                            <Form.Label>Name: </Form.Label>
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label>Movie </Form.Label>
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleModalClose}>
+                        Hide
                     </Button>
+                </Modal.Footer>
+            </Modal>
+            <div className="container-seats">
+                <div className="seat-selector">
+                    <div className="header">
+                        <h1 className="header">Seats</h1>
+                        <Button
+                            variant={!choosing ? 'primary' : 'warning'}
+                            onClick={handleSeatSelection}
+                        >
+                            {!choosing ? 'Choose seats' : 'Cancel'}
+                        </Button>
+                    </div>
+                    <img src={screen} className="screenSVG"></img>
+                    <div>{rows}</div>
                 </div>
-                <img src={screen} className="screenSVG"></img>
-                <div>{rows}</div>
+                {choosing ? (
+                    <SideBar
+                        selectedSeats={selectedSeats}
+                        removeSelectedSeat={removeSelectedSeat}
+                        openModal={() => setShowModal(true)}
+                    ></SideBar>
+                ) : (
+                    ''
+                )}
             </div>
-            {choosing ? (
-                <div className="sidebar">
-                    <h3 className="subheader text-white">Selected seats</h3>
-                    {selectedSeats.map((seat) => (
-                        <div className="selected-seat">
-                            <p className="text-white">
-                                Row {seat.row} Seat {seat.number}
-                            </p>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                ''
-            )}
-        </div>
+        </>
     );
 };
 

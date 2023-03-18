@@ -1,0 +1,28 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    flex: 0.5 1 0;
+    animation: slideIn 0.1s ease-in-out;
+    background-color: rgb(175, 156, 255);
+}
+
+.sidebar .button-add:last-of-type {
+    margin: auto 5px 10px 5px;
+}
+
+.selected-seat {
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    padding: 5px;
+    margin: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.selected-seat p {
+    margin: 0;
+    padding-bottom: 5px;
+    font-size: 15px;
+}
