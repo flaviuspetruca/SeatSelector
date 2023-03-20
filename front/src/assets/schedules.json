@@ -1,0 +1,98 @@
+[
+    {
+        "id": 1,
+        "movie": {
+            "id": 1,
+            "title": "The Shawshank Redemption",
+            "description": "Some description",
+            "duration": "02h 30m",
+            "image": "http://www.imdb.com/title/tt0111161/mediaviewer/rm1776027136"
+        },
+        "date_time": "2023-03-21 12:00:00",
+        "price": 10.5
+    },
+    {
+        "id": 2,
+        "movie": {
+            "id": 2,
+            "title": "The Godfather",
+            "description": "Some description",
+            "duration": "02h 30m",
+            "image": "http://www.imdb.com/title/tt0068646/mediaviewer/rm2441748480"
+        },
+        "date_time": "2023-03-21 16:00:00",
+        "price": 10.5
+    },
+    {
+        "id": 3,
+        "movie": {
+            "id": 3,
+            "title": "The Dark Knight",
+            "description": "Some description",
+            "duration": "02h 30m",
+            "image": "http://www.imdb.com/title/tt0068646/mediaviewer/rm2441748480"
+        },
+        "date_time": "2023-03-22 12:00:00",
+        "price": 10.5
+    },
+    {
+        "id": 4,
+        "movie": {
+            "id": 4,
+            "title": "The Godfather: Part II",
+            "description": "Some description",
+            "duration": "02h 30m",
+            "image": "http://www.imdb.com/title/tt0071562/mediaviewer/rm1776027136"
+        },
+        "date_time": "2023-03-22 16:00:00",
+        "price": 10.5
+    },
+    {
+        "id": 5,
+        "movie": {
+            "id": 5,
+            "title": "The Lord of the Rings: The Return of the King",
+            "description": "Some description",
+            "duration": "02h 30m",
+            "image": "http://www.imdb.com/title/tt0167260/mediaviewer/rm1776027136"
+        },
+        "date_time": "2023-03-23 12:00:00",
+        "price": 10.5
+    },
+    {
+        "id": 6,
+        "movie": {
+            "id": 6,
+            "title": "Pulp Fiction",
+            "description": "Some description",
+            "duration": "02h 30m",
+            "image": "http://www.imdb.com/title/tt0110912/mediaviewer/rm1776027136"
+        },
+        "date_time": "2023-03-23 16:00:00",
+        "price": 10.5
+    },
+    {
+        "id": 7,
+        "movie": {
+            "id": 7,
+            "title": "The Good, the Bad and the Ugly",
+            "description": "Some description",
+            "duration": "02h 30m",
+            "image": "http://www.imdb.com/title/tt0060196/mediaviewer/rm1776027136"
+        },
+        "date_time": "2023-03-24 12:00:00",
+        "price": 10.5
+    },
+    {
+        "id": 8,
+        "movie": {
+            "id": 8,
+            "title": "The Lord of the Rings: The Fellowship of the Ring",
+            "description": "Some description",
+            "duration": "02h 30m",
+            "image": "http://www.imdb.com/title/tt0120737/mediaviewer/rm1776027136"
+        },
+        "date_time": "2023-03-24 16:00:00",
+        "price": 10.5
+    }
+]

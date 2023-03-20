@@ -17,8 +17,13 @@ const SideBar = (props: IProps) => {
     return (
         <div className="sidebar">
             <h3 className="subheader text-white">Selected seats</h3>
+            {selectedSeats.length === 0 ? (
+                <p className="text-white">No seats selected</p>
+            ) : (
+                ''
+            )}
             {selectedSeats.map((seat) => (
-                <div className="selected-seat">
+                <div key={seat.id} className="selected-seat">
                     <img src={seatIcon}></img>
                     <p>
                         Row {seat.row} Seat {seat.number}

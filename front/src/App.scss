@@ -2,6 +2,12 @@
     font-family: 'Anton', sans-serif;
 }
 
+:root {
+    --color-primary: #535de6;
+    --color-secondary: rgb(175, 156, 255);
+    --color-tertiary: rgb(220, 211, 255);
+}
+
 a {
     text-decoration: none !important;
     color: #535de6 !important;

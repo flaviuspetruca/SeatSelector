@@ -2,23 +2,20 @@ import { useEffect, useState } from 'react';
 import { ISeat } from '../../types';
 import SEATS from '../../assets/seats.json';
 import screen from '../../assets/screen2.svg';
-import seatIcon from '../../assets/seat.svg';
+import audioWrong from '../../assets/stop.mp3';
+
 import Seat from '../Seat/Seat';
 
 import '../../stylesheets/Seats/Seats.css';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import SideBar from '../SideBar/SideBar';
+import BookingForm from '../BookingForm/BookingForm';
 
 const Seats = () => {
     const [seats, setSeats] = useState<ISeat[]>([]);
     const [selectedSeats, setSelectedSeats] = useState<ISeat[]>([]);
     const [choosing, setChoosing] = useState(false);
-
     const [showModal, setShowModal] = useState(false);
-
-    const handleModalClose = () => {
-        setShowModal(false);
-    };
 
     const handleSeatSelection = () => {
         setChoosing(!choosing);
@@ -43,6 +40,12 @@ const Seats = () => {
         setSelectedSeats([...selectedSeats]);
     };
 
+    const resetSelectedSeats = () => {
+        localStorage.removeItem('selectedSeats');
+        setSelectedSeats([]);
+        setChoosing(false);
+    };
+
     useEffect(() => {
         const getSeats = async () => {
             setSeats(SEATS);
@@ -58,16 +61,17 @@ const Seats = () => {
         }
     }, []);
 
-    const rows = [];
+    const rows: JSX.Element[] = [];
     let currentRow = 0;
     let rowSeats: JSX.Element[] = [];
+    let audio = new Audio(audioWrong);
 
     // Loop through the seats and group them by row
     seats.forEach((seat) => {
         if (seat.row !== currentRow) {
             // If we've reached a new row, add the previous row's seats to the rows array
             rows.push(
-                <div className="row" key={currentRow}>
+                <div className="row" key={`row-${seat.row}`}>
                     {rowSeats}
                 </div>
             );
@@ -81,39 +85,27 @@ const Seats = () => {
                 seat={seat}
                 choosing={choosing}
                 addSeat={handleSeatClick}
+                audio={audio}
+                key={`seat-${seat.id}`}
             ></Seat>
         );
     });
 
     // Add the last row's seats to the rows array
-    rows.push(
-        <div className="row" key={currentRow}>
+    /* rows.push(
+        <div className="row" key={`row-${currentRow}`}>
             {rowSeats}
         </div>
-    );
+    ); */
 
     return (
         <>
-            <Modal show={showModal} onHide={handleModalClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Fill in the information</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group>
-                            <Form.Label>Name: </Form.Label>
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Movie </Form.Label>
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleModalClose}>
-                        Hide
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <BookingForm
+                selectedSeats={selectedSeats}
+                showModal={showModal}
+                setShowModal={setShowModal}
+                resetSelectedSeats={resetSelectedSeats}
+            ></BookingForm>
             <div className="container-seats">
                 <div className="seat-selector">
                     <div className="header">
@@ -132,7 +124,7 @@ const Seats = () => {
                     <SideBar
                         selectedSeats={selectedSeats}
                         removeSelectedSeat={removeSelectedSeat}
-                        openModal={() => setShowModal(true)}
+                        openModal={() => setShowModal(!showModal)}
                     ></SideBar>
                 ) : (
                     ''

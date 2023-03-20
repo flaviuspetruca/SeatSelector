@@ -7,6 +7,7 @@ import Seats from './components/Seats/Seats';
 
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Movies from './components/Movies/Movies';
 
 function App() {
     return (
@@ -16,12 +17,13 @@ function App() {
                     <Container>
                         <Navbar.Brand href="/movies">Cinema</Navbar.Brand>
                         <Nav className="navbar-link-container me-auto">
-                            <Link to="/movies">Movies</Link>
+                            <Link to="/seats">Movies</Link>
                         </Nav>
                     </Container>
                 </Navbar>
                 <Routes>
-                    <Route path="/movies" index element={<Seats />} />
+                    <Route path="/movies" index element={<Movies />} />
+                    <Route path="/seats/:id" index element={<Seats />} />
                 </Routes>
             </BrowserRouter>
         </div>

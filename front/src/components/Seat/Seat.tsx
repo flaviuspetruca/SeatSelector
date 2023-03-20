@@ -4,18 +4,16 @@ import { Overlay, Tooltip } from 'react-bootstrap';
 
 import seatIcon from '../../assets/seat.svg';
 import seatBooked from '../../assets/seat-booked.svg';
-import audioWrong from '../../assets/stop.mp3';
 import '../../stylesheets/Seat/Seat.css';
 
 interface IProps {
     seat: ISeat;
+    audio: HTMLAudioElement;
     addSeat: (seat: ISeat) => void;
     choosing: boolean;
 }
 
 const Seat = (props: IProps) => {
-    let audio = new Audio(audioWrong);
-
     const seat = props.seat;
     const [show, setShow] = React.useState(false);
     const target = React.useRef(null);
@@ -25,9 +23,9 @@ const Seat = (props: IProps) => {
             return;
         }
         if (seat.isBooked) {
-            audio.play();
+            props.audio.play();
+            return;
         }
-        console.log('clicked');
         props.addSeat(seat);
         setShow(true);
     };
@@ -36,7 +34,6 @@ const Seat = (props: IProps) => {
         <>
             <div
                 ref={target}
-                key={seat.id}
                 className={`seat ${seat.isBooked ? 'booked' : ''} ${
                     seat.number % 10 === 5 ? 'me-5' : ''
                 } ${props.choosing ? 'choosing' : ''}`}

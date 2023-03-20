@@ -1,0 +1,38 @@
+.movies-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 30px;
+}
+
+.week-paragraph {
+    margin: 0.5rem;
+}
+
+.day {
+    margin: 10px 0;
+}
+
+.calendar {
+    display: flex;
+    flex-direction: row;
+    margin: 30px;
+    flex-wrap: wrap;
+}
+
+.calendar-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 0;
+    border: 1px solid rgb(192, 192, 192);
+    border-radius: 5px;
+    min-width: 300px;
+    min-height: 1000px;
+    margin: 10px;
+}
+
+.no-movies {
+    margin: 20px;
+}
