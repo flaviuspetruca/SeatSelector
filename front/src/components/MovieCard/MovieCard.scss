@@ -19,7 +19,7 @@
     }
 
     &:hover img {
-        transform: scaleY(1.2);
+        transform: translateY(5px);
     }
 
     &:hover .movie-title {
@@ -39,6 +39,10 @@
     border-top: none !important;
     border-bottom: none !important;
     border-right: none !important;
+}
+
+.movie-card img {
+    height: 60%;
 }
 
 .movie-time {

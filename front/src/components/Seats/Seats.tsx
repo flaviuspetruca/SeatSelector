@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ISeat } from '../../types';
+import { ISchedule, ISeat } from '../../types';
 import SEATS from '../../assets/seats.json';
+import SCHEDULES from '../../assets/schedules.json';
 import screen from '../../assets/screen2.svg';
 import audioWrong from '../../assets/stop.mp3';
 
@@ -10,19 +11,25 @@ import '../../stylesheets/Seats/Seats.css';
 import { Button } from 'react-bootstrap';
 import SideBar from '../SideBar/SideBar';
 import BookingForm from '../BookingForm/BookingForm';
+import { API_URL } from '../../utils';
 
 const Seats = () => {
     const [seats, setSeats] = useState<ISeat[]>([]);
     const [selectedSeats, setSelectedSeats] = useState<ISeat[]>([]);
+    const [schedule, setSchedule] = useState<ISchedule | undefined>();
     const [choosing, setChoosing] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [rerender, setRerender] = useState(false);
+
+    const params = new URLSearchParams(document.location.search);
+    const id = params.get('id');
 
     const handleSeatSelection = () => {
         setChoosing(!choosing);
     };
 
     const handleSeatClick = (seat: ISeat) => {
-        if (selectedSeats.includes(seat)) {
+        if (selectedSeats.find((s) => s.id === seat.id)) {
             // TO DO Add notification
             return;
         }
@@ -36,30 +43,51 @@ const Seats = () => {
         if (index > -1) {
             selectedSeats.splice(index, 1);
         }
-        localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats));
+        localStorage.setItem(
+            `selectedSeats-${id}`,
+            JSON.stringify(selectedSeats)
+        );
         setSelectedSeats([...selectedSeats]);
     };
 
     const resetSelectedSeats = () => {
-        localStorage.removeItem('selectedSeats');
+        localStorage.removeItem(`selectedSeats-${id}`);
         setSelectedSeats([]);
         setChoosing(false);
     };
 
     useEffect(() => {
+        const getSchedule = async () => {
+            if (!id) {
+                window.location.href = '/not-found';
+            }
+            const response = await fetch(`${API_URL}/schedule?id=${id}`);
+            const data = await response.json();
+            setSchedule(data);
+        };
+
         const getSeats = async () => {
-            setSeats(SEATS);
-            /* const response = await fetch('http://localhost:3000/seats')
-            const data = await response.json()
-            setSeats(data) */
+            const mockSeats = SEATS;
+            const response = await fetch(
+                `${API_URL}/reservedseats?schedule_id=${id}`
+            );
+            const data = await response.json();
+            data.map((seat: ISeat) => {
+                const mockSeat = mockSeats.find((s) => s.id === seat.id);
+                if (mockSeat) {
+                    mockSeat.isBooked = true;
+                }
+            });
+            setSeats(mockSeats);
         };
         getSeats();
-        // get selected seats from localstorage
-        const selectedSeats = localStorage.getItem('selectedSeats');
+        getSchedule();
+
+        const selectedSeats = localStorage.getItem(`selectedSeats-${id}`);
         if (selectedSeats) {
             setSelectedSeats(JSON.parse(selectedSeats));
         }
-    }, []);
+    }, [rerender]);
 
     const rows: JSX.Element[] = [];
     let currentRow = 0;
@@ -92,33 +120,84 @@ const Seats = () => {
     });
 
     // Add the last row's seats to the rows array
-    /* rows.push(
-        <div className="row" key={`row-${currentRow}`}>
+    rows.push(
+        <div className="row" key={`row-${currentRow + 1}`}>
             {rowSeats}
         </div>
-    ); */
+    );
 
     return (
-        <>
+        <div style={{ height: '100%' }}>
             <BookingForm
+                schedule_id={Number(id)}
                 selectedSeats={selectedSeats}
                 showModal={showModal}
                 setShowModal={setShowModal}
                 resetSelectedSeats={resetSelectedSeats}
+                rerender={rerender}
+                setRerender={setRerender}
             ></BookingForm>
             <div className="container-seats">
-                <div className="seat-selector">
-                    <div className="header">
-                        <h1 className="header">Seats</h1>
-                        <Button
-                            variant={!choosing ? 'primary' : 'warning'}
-                            onClick={handleSeatSelection}
-                        >
-                            {!choosing ? 'Choose seats' : 'Cancel'}
-                        </Button>
+                <div className="info-container">
+                    {schedule && !choosing ? (
+                        <div className="movie-info">
+                            <img
+                                src={schedule.movie.image}
+                                className="poster"
+                            ></img>
+                            <h1 className="header">{schedule.movie.title}</h1>
+                            <p className="subsubheader">
+                                {schedule.movie.description}
+                            </p>
+                            <p className="subsubheader">
+                                {new Date(
+                                    schedule.date_time
+                                ).toLocaleDateString()}
+                            </p>
+                            <p className="subsubheader">
+                                {new Date(
+                                    schedule.date_time
+                                ).toLocaleTimeString()}
+                            </p>
+                        </div>
+                    ) : (
+                        ''
+                    )}
+                    <div className="seat-selector">
+                        <div className="header">
+                            <h1 className="header mt-5">Seats</h1>
+                            {schedule && choosing ? (
+                                <div className="small-movie-info">
+                                    <h1 className="subheader">
+                                        {schedule.movie.title}
+                                    </h1>
+                                    <p className="subsubheader">
+                                        {schedule.movie.description}
+                                    </p>
+                                    <p className="subsubheader">
+                                        {new Date(
+                                            schedule.date_time
+                                        ).toLocaleDateString()}
+                                    </p>
+                                    <p className="subsubheader">
+                                        {new Date(
+                                            schedule.date_time
+                                        ).toLocaleTimeString()}
+                                    </p>
+                                </div>
+                            ) : (
+                                ''
+                            )}
+                            <Button
+                                variant={!choosing ? 'primary' : 'warning'}
+                                onClick={handleSeatSelection}
+                            >
+                                {!choosing ? 'Choose seats' : 'Cancel'}
+                            </Button>
+                        </div>
+                        <img src={screen} className="screenSVG"></img>
+                        <div className="mb-5">{rows}</div>
                     </div>
-                    <img src={screen} className="screenSVG"></img>
-                    <div>{rows}</div>
                 </div>
                 {choosing ? (
                     <SideBar
@@ -130,7 +209,7 @@ const Seats = () => {
                     ''
                 )}
             </div>
-        </>
+        </div>
     );
 };
 

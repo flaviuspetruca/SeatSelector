@@ -20,9 +20,24 @@ export interface ISchedule {
     price: number;
 }
 
-export interface IBooking {
+export interface IScheduleDB {
+    id: number;
+    movie_id: number;
+    date_time: string;
+    price: number;
+}
+
+export interface IBookingDB {
     id: number;
     schedule_id: number;
-    seats: { row: number; number: number }[];
+    row: number, 
+    number: number; 
     name: string;
+}
+
+export interface ISeat {
+    id: number;
+    row: number;
+    number: number;
+    isBooked: boolean;
 }

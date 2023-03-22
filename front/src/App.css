@@ -2,6 +2,12 @@
   font-family: "Anton", sans-serif;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 :root {
   --color-primary: #535de6;
   --color-secondary: rgb(175, 156, 255);
@@ -17,7 +23,7 @@ a {
   display: flex;
   flex-direction: column;
   text-align: center;
-  height: 100vh;
+  min-height: 100%;
 }
 
 .App-header {
@@ -40,6 +46,11 @@ a {
 .subheader {
   margin: 20px 0 20px 0;
   font-size: 20px;
+}
+
+.subsubheader {
+  margin: 20px 0 20px 0;
+  font-size: 13px;
 }
 
 .button-remove {

@@ -1,44 +1,97 @@
 import * as React from 'react';
 import { Pagination } from 'react-bootstrap';
-import SCHEDULES from '../../assets/schedules.json';
 import { ISchedule } from '../../types';
-import { getWeekOfYearFromDate, currentWeek } from '../../utils';
+import {
+    getWeekOfYearFromDate,
+    currentWeek,
+    API_URL,
+    yearWeeks,
+    days,
+    getDayFromDate,
+    nextWeek,
+} from '../../utils';
 
 import '../../stylesheets/Movies/Movies.css';
 import MovieCard from '../MovieCard/MovieCard';
 
 const Movies = () => {
     const [viewWeek, setViewWeek] = React.useState(currentWeek);
+    const [retrievedWeeks, setRetrievedWeeks] = React.useState<number[]>([]);
+    const [schedules, setSchedules] = React.useState<ISchedule[]>([]);
     const [calendarColumns, setCalendarColumns] = React.useState<JSX.Element[]>(
         []
     );
-    const yearWeeks = 52;
 
-    const days = [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday',
-    ];
+    const [nextDisabled, setNextDisabled] = React.useState(false);
 
-    const getDayFromDate = (date: Date) => {
-        return date.toLocaleDateString('en-US', { weekday: 'long' });
+    const getWeekSchedulesFromAPI = async (
+        weekToGet?: number
+    ): Promise<ISchedule[]> => {
+        const response = await fetch(
+            `${API_URL}/schedules?viewWeek=${weekToGet ? weekToGet : viewWeek}`
+        );
+        const schedules = await response.json();
+        return schedules;
     };
 
-    const getSchedulesForCurrentWeek = (schedules: ISchedule[]) => {
+    const getSchedules = async () => {
+        let schedulesToBuild: ISchedule[] = schedules;
+        if (!retrievedWeeks.includes(viewWeek)) {
+            const currentWeekSchedules = await getWeekSchedulesFromAPI();
+
+            const nextWeekSchedules = await getWeekSchedulesFromAPI(
+                nextWeek(viewWeek)
+            );
+            const newSchedules = pushToSchedules(currentWeekSchedules);
+            pushToSchedules(nextWeekSchedules);
+            schedulesToBuild = newSchedules;
+
+            const newRenderedWeeks = retrievedWeeks;
+            if (!newRenderedWeeks.includes(viewWeek)) {
+                newRenderedWeeks.push(viewWeek);
+                newRenderedWeeks.push(nextWeek(viewWeek));
+            }
+            setRetrievedWeeks(newRenderedWeeks);
+            console.log(nextWeekSchedules);
+            if (nextWeekSchedules.length === 0) {
+                setNextDisabled(true);
+            }
+        } else {
+            if (
+                getSchedulesForWeek(schedulesToBuild, nextWeek(viewWeek))
+                    .length === 0
+            ) {
+                setNextDisabled(true);
+            }
+        }
+        setCalendarColumns(buildCalendarColumns(schedulesToBuild));
+        return schedulesToBuild;
+    };
+
+    const pushToSchedules = (schedulesToPush: ISchedule[]) => {
+        const newSchedules: ISchedule[] = schedules;
+        schedulesToPush.forEach((schedule) => {
+            if (!newSchedules.find((s) => s.id === schedule.id)) {
+                newSchedules.push(schedule);
+            }
+        });
+        setSchedules(newSchedules);
+        return newSchedules;
+    };
+
+    const getSchedulesForWeek = (schedules: ISchedule[], week?: number) => {
         const currentWeekSchedules = schedules.filter((schedule) => {
             const scheduleDate = new Date(schedule.date_time);
-            return getWeekOfYearFromDate(scheduleDate) === viewWeek;
+            return (
+                getWeekOfYearFromDate(scheduleDate) === (week ? week : viewWeek)
+            );
         });
         return currentWeekSchedules;
     };
 
-    const getMoviesForDay = (day: string, schedules: ISchedule[]) => {
+    const buildMoviesForDay = (day: string, schedules: ISchedule[]) => {
         const movies: JSX.Element[] = [];
-        getSchedulesForCurrentWeek(schedules).forEach((schedule) => {
+        schedules.forEach((schedule) => {
             const scheduleDate = new Date(schedule.date_time);
             if (getDayFromDate(scheduleDate) === day) {
                 movies.push(
@@ -53,11 +106,12 @@ const Movies = () => {
         }
     };
 
-    const getCalendarColumns = (schedules: ISchedule[]) => {
+    const buildCalendarColumns = (schedules: ISchedule[]) => {
+        const viewWeekSchedules = getSchedulesForWeek(schedules);
         return days.map((day) => (
             <div className="calendar-column" key={day}>
                 <div className="day">{day}</div>
-                {getMoviesForDay(day, schedules)}
+                {buildMoviesForDay(day, viewWeekSchedules)}
             </div>
         ));
     };
@@ -71,20 +125,20 @@ const Movies = () => {
         } else {
             setViewWeek(viewWeek - 1);
         }
+
+        setNextDisabled(false);
     };
 
     const onNextClick = () => {
-        if (viewWeek === yearWeeks) {
-            setViewWeek(0);
-        } else {
-            setViewWeek(viewWeek + 1);
-        }
+        setViewWeek(nextWeek(viewWeek));
     };
 
     React.useEffect(() => {
-        // TO DO implement schedules from API
-        const schedules = SCHEDULES;
-        setCalendarColumns(getCalendarColumns(schedules));
+        if (!retrievedWeeks.includes(viewWeek)) {
+            getSchedules();
+        } else {
+            setCalendarColumns(buildCalendarColumns(schedules));
+        }
     }, [viewWeek]);
 
     return (
@@ -96,7 +150,10 @@ const Movies = () => {
                         disabled={viewWeek === currentWeek}
                         onClick={onPrevClick}
                     />
-                    <Pagination.Next onClick={onNextClick} />
+                    <Pagination.Next
+                        disabled={nextDisabled}
+                        onClick={onNextClick}
+                    />
                 </Pagination>
                 <p className="week-paragraph">Week {viewWeek}</p>
             </div>

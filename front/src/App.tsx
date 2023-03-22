@@ -1,8 +1,7 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
 import Seats from './components/Seats/Seats';
 
 import './App.css';
@@ -16,14 +15,13 @@ function App() {
                 <Navbar bg="dark" variant="dark">
                     <Container>
                         <Navbar.Brand href="/movies">Cinema</Navbar.Brand>
-                        <Nav className="navbar-link-container me-auto">
-                            <Link to="/seats">Movies</Link>
-                        </Nav>
                     </Container>
                 </Navbar>
                 <Routes>
                     <Route path="/movies" index element={<Movies />} />
-                    <Route path="/seats/:id" index element={<Seats />} />
+                    <Route path="/seats" index element={<Seats />} />
+                    <Route path="/seats" index element={<Seats />} />
+                    <Route path="/*" element={<h1>404 Not Found</h1>} />
                 </Routes>
             </BrowserRouter>
         </div>

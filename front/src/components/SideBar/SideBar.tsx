@@ -38,6 +38,7 @@ const SideBar = (props: IProps) => {
                 </div>
             ))}
             <Button
+                disabled={selectedSeats.length === 0}
                 variant="success"
                 className="button-add"
                 onClick={openModal}

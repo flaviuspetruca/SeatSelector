@@ -3,19 +3,26 @@ import { Button, Form, Modal } from 'react-bootstrap';
 import { ISeat } from '../../types';
 
 import '../../stylesheets/BookingForm/BookingForm.css';
+import { API_URL } from '../../utils';
 
 interface IProps {
+    schedule_id: number;
     selectedSeats: ISeat[];
     showModal: boolean;
     setShowModal: (show: boolean) => void;
     resetSelectedSeats: () => void;
+    rerender: boolean;
+    setRerender: (rerender: boolean) => void;
 }
 
 const BookingForm = (props: IProps) => {
+    const schedule_id = props.schedule_id;
     const selectedSeats = props.selectedSeats;
     const showModal = props.showModal;
     const setShowModal = props.setShowModal;
     const resetSelectedSeats = props.resetSelectedSeats;
+    const rerender = props.rerender;
+    const setRerender = props.setRerender;
 
     const [name, setName] = React.useState('');
     const inputRef = React.useRef<HTMLInputElement>(null);
@@ -25,9 +32,36 @@ const BookingForm = (props: IProps) => {
         setName('');
     };
 
-    const handleBooking = () => {
-        if (name === '') {
+    const reserve = async () => {
+        const body = JSON.stringify({
+            name,
+            seats: selectedSeats.map((seat) => {
+                return { row: seat.row, number: seat.number };
+            }),
+        });
+        const response = await fetch(
+            `${API_URL}/bookseats?schedule_id=${schedule_id}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body,
+            }
+        );
+        if (response.ok) {
             // TO DO Add notification
+            setShowModal(false);
+            setName('');
+            resetSelectedSeats();
+            setRerender(!rerender);
+        } else {
+            // TO DO Add notification
+        }
+    };
+
+    const handleBooking = async () => {
+        if (name === '' || name.length < 7 || name.length > 30) {
             if (inputRef.current) {
                 inputRef.current.style.border = '2px solid rgb(187, 0, 0)';
                 inputRef.current.style.setProperty(
@@ -37,10 +71,7 @@ const BookingForm = (props: IProps) => {
             }
             return;
         }
-        // TO DO Add booking and notification
-        setShowModal(false);
-        setName('');
-        resetSelectedSeats();
+        await reserve();
     };
 
     return (
@@ -49,7 +80,7 @@ const BookingForm = (props: IProps) => {
                 <Modal.Title>Fill in the information</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form>
+                <Form onSubmit={(e) => e.preventDefault()}>
                     <Form.Group key={'from-group1'} className="form-group">
                         <Form.Label>Movie title</Form.Label>
                         <br />

@@ -21,7 +21,7 @@ const MovieCard = (props: IProps) => {
 
     const handleMovieClick = () => {
         //redirect to seats page
-        window.location.href = `/seats/:${props.schedule.id}`;
+        window.location.href = `/seats?id=${props.schedule.id}`;
     };
 
     const movie = props.schedule.movie;
@@ -39,12 +39,9 @@ const MovieCard = (props: IProps) => {
             <Card className="movie-card col-6">
                 <Card.Img variant="top" src={movie.image} />
                 <Card.Body>
-                    <Card.Title className="movie-title">
+                    <Card.Title className="movie-title mt-3">
                         {movie.title}
                     </Card.Title>
-                    <Card.Text className="movie-description">
-                        {movie.description}
-                    </Card.Text>
                 </Card.Body>
             </Card>
         </div>

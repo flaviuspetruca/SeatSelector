@@ -17,7 +17,7 @@
   transition: 0.3s ease-in-out;
 }
 .movie-card-container:hover img {
-  transform: scaleY(1.2);
+  transform: translateY(5px);
 }
 .movie-card-container:hover .movie-title {
   transform: scale(1.2);
@@ -34,6 +34,10 @@
   border-top: none !important;
   border-bottom: none !important;
   border-right: none !important;
+}
+
+.movie-card img {
+  height: 60%;
 }
 
 .movie-time {
